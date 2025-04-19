@@ -1,11 +1,11 @@
 <module rename-to="gwt">
 
     <inherits name="com.google.gwt.user.User"/>
+    <inherits name="elemental2.dom.Dom"/>
+    <inherits name="com.cocoawerks.gwt.mosaic.Mosaic"/>
 
     <source path="client"/>
 
     <entry-point class="com.cocoawerks.mosaic.router.client.Entry"/>
-
-
 
 </module>
