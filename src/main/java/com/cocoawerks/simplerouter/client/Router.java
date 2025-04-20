@@ -24,8 +24,13 @@ public class Router {
 
   private Router() {}
 
+  private boolean installed = false;
+
   public void install() {
-    Scheduler.get().scheduleDeferred(this::displayCurrentView);
+    if (!installed) {
+      Scheduler.get().scheduleDeferred(this::displayCurrentView);
+      installed = true;
+    }
   }
 
   public Route currentRoute() {
@@ -52,6 +57,7 @@ public class Router {
       RegExp regExp = path.toRegExp();
       views.put(regExp, view);
       paths.put(regExp, path);
+      install();
     }
   }
 

@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Path is a relative path that ultimate the Router
- * uses to map with views. It can contain path parameters
- * prefixed with : and wildcards using *. Examples
+ * A relative path that the Router uses to match Routes with
+ * Views. It can contain path parameters prefixed with :
+ * and wildcards using *. Examples:
  *   /todoApp/
  *   /document/:id
  *   /app/*
@@ -25,10 +25,9 @@ public class Path {
   }
 
   /**
-   * Converts a string and prefixes it with a / and
-   * appends a / if necessary. Aka "normalizes" the
-   * path string. This keeps all path strings
-   * with the same format
+   * Converts a string and prefixes it with a backslash and
+   * appends one if necessary. This "normalizes" the
+   * path string, ensuring all path strings have the same format
    * @param path
    * @return normalized path
    */
@@ -42,6 +41,9 @@ public class Path {
     return path;
   }
 
+  /**
+   * Parses out path parameters
+   */
   private void parse() {
     String[] parts = path.split("/");
     Integer i = 0;
@@ -56,6 +58,12 @@ public class Path {
     }
   }
 
+  /**
+   * Gets the index of the path parameter named paramName.
+   * @param paramName
+   * @return index of path parameter paramName or -1 if paramName
+   * is not a path parameter
+   */
   public Integer getParamIndex(String paramName) {
     if (pathParams.containsKey(paramName)) {
       return pathParams.get(paramName);
@@ -68,6 +76,11 @@ public class Path {
     return path;
   }
 
+  /**
+   * Converts the Path to a Regular Expression for mathcing
+   * with Routes.
+   * @return Regular Expression representation of Path
+   */
   public RegExp toRegExp() {
     StringBuilder regexPattern = new StringBuilder();
     String[] parts = path.split("/");
