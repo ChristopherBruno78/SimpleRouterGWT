@@ -1,87 +1,87 @@
 package com.cocoawerks.simplerouter.client;
 
-import static elemental2.dom.DomGlobal.window;
+import static com.cocoawerks.simplerouter.client.RouteURL.normalize;
 
-import com.google.gwt.user.client.ui.Widget;
-import elemental2.dom.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import com.google.gwt.regexp.shared.RegExp;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Route is a wrapper around URL with
- * extra functionality
+ * A relative path that the Router uses to match with
+ * Views. It can contain path parameters prefixed with :
+ * and wildcards using *. Examples:
+ *   /todoApp/
+ *   /document/:id
+ *   /app/*
  */
 public class Route {
-  final URL url;
+  private final String path;
 
-  public Route(String urlString) {
-    this.url = new URL(urlString, window.location.href);
+  private final Map<String, Integer> pathParams = new HashMap<>();
+
+  public Route(String path) {
+    this.path = normalize(path);
+    parse();
   }
 
-  public String getPath() {
-    return Path.normalize(url.pathname);
-  }
-
-  public Route deriveRouteByAppendingPathComponent(String pathComponent) {
-    return new Route(Path.normalize(getPath() + pathComponent));
-  }
-
-  public String[] getPathComponents() {
-    List<String> pathComponents = new ArrayList<>();
-    String[] parts = getPath().split("/");
-    for (String part : parts) {
-      if (!part.isBlank()) {
-        pathComponents.add(part);
+  /**
+   * Parses out path parameters
+   */
+  private void parse() {
+    String[] parts = path.split("/");
+    Integer i = 0;
+    for (String pathComponent : parts) {
+      if (pathComponent.isBlank()) {
+        continue;
       }
-    }
-    return pathComponents.toArray(new String[0]);
-  }
-
-  public String getPathComponent(Integer index) {
-    if (index > -1) {
-      String[] parts = getPathComponents();
-      if (index < parts.length) {
-        return parts[index];
+      if (pathComponent.startsWith(":")) {
+        pathParams.put(pathComponent.substring(1), i);
       }
+      i++;
     }
-    return "";
   }
 
-  public String getPathParameter(String name) {
-    Path path = Router.get().getPath(this);
-    assert path != null : "Route is not yet registered with the Router";
-    Integer index = path.getParamIndex(name);
-    if (index > -1) {
-      return getPathComponent(index);
+  /**
+   * Gets the index of the path parameter named paramName.
+   * @param paramName
+   * @return index of path parameter paramName or -1 if paramName
+   * is not a path parameter
+   */
+  public Integer getParamIndex(String paramName) {
+    if (pathParams.containsKey(paramName)) {
+      return pathParams.get(paramName);
     }
-    return "";
-  }
-
-  public String getQueryParameter(String name) {
-    return url.searchParams.get(name);
-  }
-
-  public Widget getView() {
-    Widget view = Router.get().getView(this);
-    assert view != null : "Route is not yet registered with the Router";
-    return view;
+    return -1;
   }
 
   @Override
   public String toString() {
-    return url.href;
+    return path;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) return false;
-    Route route = (Route) o;
-    return Objects.equals(url.href, route.url.href);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(url.href);
+  /**
+   * Converts the Path to a Regular Expression for mathcing
+   * with Routes.
+   * @return Regular Expression representation of Path
+   */
+  public RegExp toRegExp() {
+    StringBuilder regexPattern = new StringBuilder();
+    String[] parts = path.split("/");
+    regexPattern.append("^");
+    for (String part : parts) {
+      if (!part.isBlank()) {
+        regexPattern.append("/");
+        if (part.equals("*")) {
+          regexPattern.append("\\S+");
+        } else if (part.startsWith(":")) {
+          regexPattern.append("[^/]+");
+        } else {
+          regexPattern.append(part);
+        }
+      }
+    }
+    regexPattern.append("/");
+    regexPattern.append("$");
+    return RegExp.compile(regexPattern.toString());
   }
 }

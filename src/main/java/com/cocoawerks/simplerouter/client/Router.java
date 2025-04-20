@@ -17,7 +17,7 @@ public class Router {
     return INSTANCE;
   }
 
-  final Map<RegExp, Path> paths = new HashMap<>();
+  final Map<RegExp, Route> paths = new HashMap<>();
   final Map<RegExp, Widget> views = new HashMap<>();
 
   private Widget currentView;
@@ -40,8 +40,8 @@ public class Router {
     }
   }
 
-  public Route currentRoute() {
-    return new Route(window.location.toString());
+  public RouteURL currentURL() {
+    return new RouteURL(window.location.toString());
   }
 
   private void displayCurrentView() {
@@ -49,8 +49,8 @@ public class Router {
       .get()
       .scheduleDeferred(
         () -> {
-          Route currentRoute = currentRoute();
-          Widget nextView = getView(currentRoute);
+          RouteURL currentURL = currentURL();
+          Widget nextView = getView(currentURL);
           if (nextView == currentView) {
             return;
           }
@@ -65,7 +65,7 @@ public class Router {
       );
   }
 
-  public void map(Path path, Widget view) {
+  public void map(Route path, Widget view) {
     if (path != null) {
       RegExp regExp = path.toRegExp();
       views.put(regExp, view);
@@ -79,7 +79,7 @@ public class Router {
    * the view
    * @param route
    */
-  public void routeTo(Route route) {
+  public void routeTo(RouteURL route) {
     history.pushState(null, "", route.getPath());
     displayCurrentView();
   }
@@ -92,8 +92,8 @@ public class Router {
     this.notFoundView = notFoundView;
   }
 
-  Path getPath(Route route) {
-    for (Map.Entry<RegExp, Path> entry : paths.entrySet()) {
+  Route getRoute(RouteURL route) {
+    for (Map.Entry<RegExp, Route> entry : paths.entrySet()) {
       if (entry.getKey().test(route.getPath())) {
         return entry.getValue();
       }
@@ -101,7 +101,7 @@ public class Router {
     return null;
   }
 
-  Widget getView(Route route) {
+  Widget getView(RouteURL route) {
     for (Map.Entry<RegExp, Widget> entry : views.entrySet()) {
       if (entry.getKey().test(route.getPath())) {
         return entry.getValue();
