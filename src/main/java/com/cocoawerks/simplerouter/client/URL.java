@@ -35,6 +35,31 @@ public class URL {
     return path;
   }
 
+  public String getHref() {
+    return url.href;
+  }
+
+  public String getOrigin() {
+    return url.origin;
+  }
+
+  public String getProtocol() {
+    return url.protocol;
+  }
+
+  public String getHost() {
+    return url.host;
+  }
+
+  public String getHostname() {
+    return url.hostname;
+  }
+
+  public String getPort() {
+
+    return url.port;
+  }
+
   public String getPath() {
     return normalize(url.pathname);
   }
