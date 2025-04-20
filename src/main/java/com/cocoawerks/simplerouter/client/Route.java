@@ -1,6 +1,6 @@
 package com.cocoawerks.simplerouter.client;
 
-import static com.cocoawerks.simplerouter.client.RouteURL.normalize;
+import static com.cocoawerks.simplerouter.client.URL.normalize;
 
 import com.google.gwt.regexp.shared.RegExp;
 import java.util.HashMap;

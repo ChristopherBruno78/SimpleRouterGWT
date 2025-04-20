@@ -3,8 +3,7 @@ package com.cocoawerks.simplerouter.client;
 import static elemental2.dom.DomGlobal.window;
 
 import com.google.gwt.user.client.ui.Widget;
-import elemental2.dom.URL;
-import elemental2.dom.URLSearchParams;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,11 +12,11 @@ import java.util.Objects;
  * RouteURL is a wrapper around URL with
  * extra functionality
  */
-public class RouteURL {
-  final URL url;
+public class URL {
+  final elemental2.dom.URL url;
 
-  public RouteURL(String urlString) {
-    this.url = new URL(urlString, window.location.href);
+  public URL(String urlString) {
+    this.url = new elemental2.dom.URL(urlString, window.location.href);
   }
 
   /**
@@ -53,8 +52,8 @@ public class RouteURL {
     return path.substring(0, path.length() - 1) + url.search;
   }
 
-  public RouteURL deriveRouteByAppendingPathComponent(String pathComponent) {
-    return new RouteURL(normalize(getPath() + pathComponent) + getQuery());
+  public URL deriveRouteByAppendingPathComponent(String pathComponent) {
+    return new URL(normalize(getPath() + pathComponent) + getQuery());
   }
 
   public String[] getPathComponents() {
@@ -106,7 +105,7 @@ public class RouteURL {
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    RouteURL route = (RouteURL) o;
+    URL route = (URL) o;
     return Objects.equals(url.href, route.url.href);
   }
 
