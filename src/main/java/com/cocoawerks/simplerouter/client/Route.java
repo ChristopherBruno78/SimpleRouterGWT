@@ -1,8 +1,7 @@
-package com.cocoawerks.mosaic.router.client;
+package com.cocoawerks.simplerouter.client;
 
 import static elemental2.dom.DomGlobal.window;
 
-import com.google.gwt.regexp.shared.RegExp;
 import elemental2.dom.URL;
 import java.util.Objects;
 

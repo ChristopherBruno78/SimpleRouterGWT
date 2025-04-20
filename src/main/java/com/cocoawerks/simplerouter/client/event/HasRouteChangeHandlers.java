@@ -1,4 +1,4 @@
-package com.cocoawerks.mosaic.router.client.event;
+package com.cocoawerks.simplerouter.client.event;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 

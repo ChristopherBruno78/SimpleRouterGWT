@@ -1,8 +1,10 @@
-package com.cocoawerks.mosaic.router.client;
+package com.cocoawerks.simplerouter.client;
 
-import com.cocoawerks.mosaic.router.client.event.HasRouteChangeHandlers;
-import com.cocoawerks.mosaic.router.client.event.RouteChangeEvent;
-import com.cocoawerks.mosaic.router.client.event.RouteChangeHandler;
+import static elemental2.dom.DomGlobal.*;
+
+import com.cocoawerks.simplerouter.client.event.HasRouteChangeHandlers;
+import com.cocoawerks.simplerouter.client.event.RouteChangeEvent;
+import com.cocoawerks.simplerouter.client.event.RouteChangeHandler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -13,24 +15,24 @@ import com.google.gwt.user.client.ui.Widget;
 import java.util.HashMap;
 import java.util.Map;
 
-import static elemental2.dom.DomGlobal.*;
-
 public class Router implements HasRouteChangeHandlers {
-  private final Map<RegExp, Widget> views = new HashMap<>();
-
-  static final Router INSTANCE = new Router();
-
-  private Widget currentView;
+  private static final Router INSTANCE = new Router();
 
   public static Router get() {
     return INSTANCE;
   }
 
+  private final Map<RegExp, Widget> views = new HashMap<>();
+
+  private Widget currentView;
+
   public Route currentRoute() {
     return new Route(window.location.pathname);
   }
 
-  private Router() {
+  private Router() {}
+
+  public void install() {
     window.addEventListener(
       "popstate",
       event -> {
@@ -63,35 +65,36 @@ public class Router implements HasRouteChangeHandlers {
   }
 
   public void mapRoute(String pattern, Widget view) {
-    if(pattern != null) {
-      if(pattern.endsWith("**")) {
-        String regExpPattern = "^"+pattern.substring(0, pattern.length() - 2)+"\\S+$";
+    if (pattern != null) {
+      if (pattern.endsWith("**")) {
+        String regExpPattern =
+          "^" + pattern.substring(0, pattern.length() - 2) + "\\S+$";
         console.log(regExpPattern);
         views.put(RegExp.compile(regExpPattern), view);
-      }
-      else if(pattern.endsWith("*")) {
+      } else if (pattern.endsWith("*")) {
         views.put(RegExp.compile(pattern), view);
-      }
-      else {
+      } else {
         String normalizedPath = Route.normalizePath(pattern);
-        String regExpPattern = "^"+normalizedPath+"$";
+        String regExpPattern = "^" + normalizedPath + "$";
         views.put(RegExp.compile(regExpPattern), view);
       }
     }
   }
 
-  public Widget getView(Route route) {
+  protected Widget getView(Route route) {
     for (Map.Entry<RegExp, Widget> entry : views.entrySet()) {
-      console.log(route.getPath());
-      console.log(entry.getKey().toString());
-      if(entry.getKey().test(route.getPath())) {
+      if (entry.getKey().test(route.getPath())) {
         return entry.getValue();
       }
     }
     return null;
   }
 
-  public void routeTo(IsSerializable data, Route route) {
+  public void routeTo(Route route) {
+    this.routeTo(route, null);
+  }
+
+  public void routeTo(Route route, IsSerializable data) {
     Route currentRoute = currentRoute();
 
     if (!currentRoute.equals(route)) {

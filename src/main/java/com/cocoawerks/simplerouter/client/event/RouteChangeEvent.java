@@ -1,6 +1,5 @@
-package com.cocoawerks.mosaic.router.client.event;
+package com.cocoawerks.simplerouter.client.event;
 
-import com.cocoawerks.gwt.mosaic.client.events.open.OpenHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 public class RouteChangeEvent extends GwtEvent<RouteChangeHandler> {

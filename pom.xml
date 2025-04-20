@@ -5,13 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.cocoawerks</groupId>
-    <artifactId>MosaicRouter</artifactId>
+    <artifactId>SimpleRouter</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <spring.version>3.4.4</spring.version>
         <gwt.version>2.12.2</gwt.version>
-        <gwt.module>com.cocoawerks.mosaic.router.MosaicRouter</gwt.module>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
@@ -52,49 +50,38 @@
             <artifactId>gwt-user</artifactId>
         </dependency>
 
-        <!-- Mosaic client side -->
         <dependency>
-            <groupId>com.cocoawerks</groupId>
-            <artifactId>MosaicGWT</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.cocoawerks</groupId>
-            <artifactId>MosaicServer</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
+            <groupId>com.google.elemental2</groupId>
+            <artifactId>elemental2-dom</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
     </dependencies>
 
-
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.java</include>
+                    <include>**/*.js</include>
+                    <include>**/*.css</include>
+                    <include>**/*.png</include>
+                    <include>**/*.gwt.xml</include>
+                    <include>**/*.ui.xml</include>
+                    <include>**/*.svg</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.ttf</include>
+                </includes>
+            </resource>
+        </resources>
+
+
         <plugins>
-            <!-- GWT -->
-            <plugin>
-                <groupId>net.ltgt.gwt.maven</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <version>1.1.0</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <moduleName>
-                        ${gwt.module}
-                    </moduleName>
-                    <sourceLevel>11</sourceLevel>
-                    <workDir>${basedir}/target/gwt/workDir</workDir>
-                    <compilerArgs>
-                        <arg>-gen</arg>
-                        <arg>${basedir}/target/gwt/gen</arg>
-                    </compilerArgs>
-                    <launcherDir>${basedir}/target/classes/public</launcherDir>
-                </configuration>
-            </plugin>
 
             <!-- Prettier -->
             <plugin>
@@ -110,21 +97,10 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <jvmArguments>
-                        --add-opens=java.base/java.lang=ALL-UNNAMED
-                        -XX:TieredStopAtLevel=1
-                    </jvmArguments>
-                </configuration>
-                <version>${spring.version}</version>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
