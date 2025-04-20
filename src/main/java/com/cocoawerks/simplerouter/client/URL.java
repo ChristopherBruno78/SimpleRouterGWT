@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * RouteURL is a wrapper around URL with
+ * RouteURL is a wrapper around native URL with
  * extra functionality
  */
 public class URL {
@@ -51,8 +51,19 @@ public class URL {
     return path.substring(0, path.length() - 1) + url.search;
   }
 
-  public URL deriveRouteByAppendingPathComponent(String pathComponent) {
+  /**
+   * appends a path component, maintaining the query params
+   * @param pathComponent
+   * @return URL with appended path component
+   */
+  public URL deriveURLByAppendingPathComponent(String pathComponent) {
     return new URL(normalize(getPath() + pathComponent) + getQuery());
+  }
+
+  public URL deriveURLByAppendingQuery(String key, String value) {
+    URL derivedURL = new URL(normalize(getPath()) + getQuery());
+    derivedURL.url.searchParams.append(key, value);
+    return derivedURL;
   }
 
   public String[] getPathComponents() {
@@ -66,6 +77,11 @@ public class URL {
     return pathComponents.toArray(new String[0]);
   }
 
+  /**
+   * Returns the path component at position ${index}
+   * @param index
+   * @return
+   */
   public String getPathComponent(Integer index) {
     if (index > -1) {
       String[] parts = getPathComponents();

@@ -65,6 +65,12 @@ public class Router {
       );
   }
 
+  /**
+   * Assign a route to a GWT view
+   * A GWT view must inherit Widget
+   * @param path
+   * @param view
+   */
   public void route(String path, Widget view) {
     if (path != null) {
       Route route = new Route(path);
