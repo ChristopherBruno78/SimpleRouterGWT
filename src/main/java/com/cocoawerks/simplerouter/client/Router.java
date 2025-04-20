@@ -74,11 +74,20 @@ public class Router {
     }
   }
 
+  /**
+   * Sends the browser to another Route and updates
+   * the view
+   * @param route
+   */
   public void routeTo(Route route) {
     history.pushState(null, "", route.getPath());
     displayCurrentView();
   }
 
+  /**
+   * When a route is not found, the view to display
+   * @param notFoundView
+   */
   public void setNotFoundView(Widget notFoundView) {
     this.notFoundView = notFoundView;
   }
