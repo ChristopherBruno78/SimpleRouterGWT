@@ -56,7 +56,6 @@ public class URL {
   }
 
   public String getPort() {
-
     return url.port;
   }
 
