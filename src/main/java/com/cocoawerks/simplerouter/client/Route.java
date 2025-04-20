@@ -9,6 +9,9 @@ public class Route {
   private final URL url;
 
   static String normalizePath(String path) {
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
     if (!path.endsWith("/")) {
       path += "/";
     }
