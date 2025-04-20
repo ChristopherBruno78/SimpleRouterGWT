@@ -1,13 +1,12 @@
 package com.cocoawerks.simplerouter.client;
 
+import static elemental2.dom.DomGlobal.window;
+
 import com.google.gwt.user.client.ui.Widget;
 import elemental2.dom.URL;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static elemental2.dom.DomGlobal.window;
 
 /**
  * Route is a wrapper around URL with
