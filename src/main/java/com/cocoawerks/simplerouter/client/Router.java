@@ -2,21 +2,15 @@ package com.cocoawerks.simplerouter.client;
 
 import static elemental2.dom.DomGlobal.*;
 
-import com.cocoawerks.simplerouter.client.event.HasStateChangeHandlers;
-import com.cocoawerks.simplerouter.client.event.StateChangeEvent;
-import com.cocoawerks.simplerouter.client.event.StateChangeHandler;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-import elemental2.dom.PopStateEvent;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Router implements HasStateChangeHandlers {
+public class Router  {
   private static final Router INSTANCE = new Router();
 
   public static Router get() {
@@ -31,26 +25,10 @@ public class Router implements HasStateChangeHandlers {
   private Router() {}
 
   public void install() {
-    window.addEventListener(
-      "popstate",
-      event -> {
-        PopStateEvent popStateEvent = (PopStateEvent) event;
-        handlerManager.fireEvent(new StateChangeEvent(popStateEvent.state));
-      }
-    );
-
-    addStateChangeHandler(
-      event -> {
-        displayCurrentView();
-      }
-    );
-
     Scheduler
       .get()
       .scheduleDeferred(
-        () -> {
-          handlerManager.fireEvent(new StateChangeEvent(null));
-        }
+              this::displayCurrentView
       );
   }
 
@@ -102,18 +80,5 @@ public class Router implements HasStateChangeHandlers {
     return notFoundView;
   }
 
-  public void pushState(Object state) {
-    pushState(state, currentRoute());
-  }
 
-  public void pushState(Object state, Route route) {
-    history.pushState(state, "", route.getPath());
-  }
-
-  private final HandlerManager handlerManager = new HandlerManager(this);
-
-  @Override
-  public HandlerRegistration addStateChangeHandler(StateChangeHandler handler) {
-    return handlerManager.addHandler(StateChangeEvent.getType(), handler);
-  }
 }
