@@ -1,5 +1,6 @@
 package com.cocoawerks.simplerouter.client;
 
+import static elemental2.dom.DomGlobal.history;
 import static elemental2.dom.DomGlobal.window;
 
 import com.google.gwt.core.client.Scheduler;
@@ -28,7 +29,13 @@ public class Router {
 
   public void install() {
     if (!installed) {
-      Scheduler.get().scheduleDeferred(this::displayCurrentView);
+      window.addEventListener(
+        "popstate",
+        event -> {
+          displayCurrentView();
+        }
+      );
+      displayCurrentView();
       installed = true;
     }
   }
@@ -38,18 +45,24 @@ public class Router {
   }
 
   private void displayCurrentView() {
-    Route currentRoute = currentRoute();
-    Widget nextView = getView(currentRoute);
-    if (nextView == currentView) {
-      return;
-    }
-    if (currentView != null) {
-      RootPanel.get().remove(currentView);
-    }
-    currentView = nextView;
-    if (currentView != null) {
-      RootPanel.get().add(currentView);
-    }
+    Scheduler
+      .get()
+      .scheduleDeferred(
+        () -> {
+          Route currentRoute = currentRoute();
+          Widget nextView = getView(currentRoute);
+          if (nextView == currentView) {
+            return;
+          }
+          if (currentView != null) {
+            RootPanel.get().remove(currentView);
+          }
+          currentView = nextView;
+          if (currentView != null) {
+            RootPanel.get().add(currentView);
+          }
+        }
+      );
   }
 
   public void map(Path path, Widget view) {
@@ -59,6 +72,11 @@ public class Router {
       paths.put(regExp, path);
       install();
     }
+  }
+
+  public void routeTo(Route route) {
+    history.pushState(null, "", route.getPath());
+    displayCurrentView();
   }
 
   public void setNotFoundView(Widget notFoundView) {

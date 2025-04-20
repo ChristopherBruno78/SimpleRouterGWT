@@ -13,7 +13,7 @@ import java.util.Objects;
  * extra functionality
  */
 public class Route {
-  private final URL url;
+  final URL url;
 
   public Route(String urlString) {
     this.url = new URL(urlString, window.location.href);
