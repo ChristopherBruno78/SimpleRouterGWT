@@ -1,4 +1,4 @@
-Simple Router for GWT Applications.
+Simple Router for GWT Applications. In the example below, navigating to the route at /todoApp/ will diplay the TodoInterface composite.
 
 ```
 public class Entry implements EntryPoint {
