@@ -7,8 +7,7 @@ public class Entry implements EntryPoint {
   @Override
   public void onModuleLoad() {
     router.setNotFoundView(new NotFoundView()); 
-    router.map("todoApp", new TodoInterface());
-    router.install();
+    router.map("todoApp", new TodoInterface()); 
   }
 }
 ```
