@@ -2,9 +2,9 @@ package com.cocoawerks.simplerouter.client;
 
 import static elemental2.dom.DomGlobal.*;
 
-import com.cocoawerks.simplerouter.client.event.HasRouteChangeHandlers;
-import com.cocoawerks.simplerouter.client.event.RouteChangeEvent;
-import com.cocoawerks.simplerouter.client.event.RouteChangeHandler;
+import com.cocoawerks.simplerouter.client.event.HasStateChangeHandlers;
+import com.cocoawerks.simplerouter.client.event.StateChangeEvent;
+import com.cocoawerks.simplerouter.client.event.StateChangeHandler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -12,10 +12,11 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import elemental2.dom.PopStateEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Router implements HasRouteChangeHandlers {
+public class Router implements HasStateChangeHandlers {
   private static final Router INSTANCE = new Router();
 
   public static Router get() {
@@ -33,17 +34,25 @@ public class Router implements HasRouteChangeHandlers {
     window.addEventListener(
       "popstate",
       event -> {
-        handlerManager.fireEvent(new RouteChangeEvent());
+        console.log("popstate");
+        PopStateEvent popStateEvent = (PopStateEvent) event;
+        handlerManager.fireEvent(new StateChangeEvent(popStateEvent.state));
       }
     );
 
-    addRouteChangeHandler(
+    addStateChangeHandler(
       event -> {
         displayCurrentView();
       }
     );
 
-    Scheduler.get().scheduleDeferred(this::displayCurrentView);
+    Scheduler
+      .get()
+      .scheduleDeferred(
+        () -> {
+          handlerManager.fireEvent(new StateChangeEvent(null));
+        }
+      );
   }
 
   public Route currentRoute() {
@@ -94,23 +103,18 @@ public class Router implements HasRouteChangeHandlers {
     return notFoundView;
   }
 
-  public void routeTo(Route route) {
-    this.routeTo(route, null);
+  public void pushState(IsSerializable state) {
+    pushState(state, currentRoute());
   }
 
-  public void routeTo(Route route, IsSerializable data) {
-    Route currentRoute = currentRoute();
-
-    if (!currentRoute.equals(route)) {
-      history.pushState(data, "", route.getPath());
-      handlerManager.fireEvent(new RouteChangeEvent());
-    }
+  public void pushState(IsSerializable state, Route route) {
+    history.pushState(state, "", route.getPath());
   }
 
   private final HandlerManager handlerManager = new HandlerManager(this);
 
   @Override
-  public HandlerRegistration addRouteChangeHandler(RouteChangeHandler handler) {
-    return handlerManager.addHandler(RouteChangeEvent.getType(), handler);
+  public HandlerRegistration addStateChangeHandler(StateChangeHandler handler) {
+    return handlerManager.addHandler(StateChangeEvent.getType(), handler);
   }
 }

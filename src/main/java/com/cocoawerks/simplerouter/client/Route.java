@@ -23,6 +23,10 @@ public class Route {
     return normalizePath(url.pathname);
   }
 
+  public Route deriveRouteByAppendingPathComponent(String pathComponent) {
+    return new Route(normalizePath(getPath() + pathComponent));
+  }
+
   public String getLastPathComponent() {
     String[] parts = url.pathname.split("/");
     if (parts.length > 1) {
