@@ -103,11 +103,11 @@ public class Router implements HasStateChangeHandlers {
     return notFoundView;
   }
 
-  public void pushState(IsSerializable state) {
+  public void pushState(Object state) {
     pushState(state, currentRoute());
   }
 
-  public void pushState(IsSerializable state, Route route) {
+  public void pushState(Object state, Route route) {
     history.pushState(state, "", route.getPath());
   }
 
