@@ -65,11 +65,12 @@ public class Router {
       );
   }
 
-  public void map(Route path, Widget view) {
+  public void map(String path, Widget view) {
     if (path != null) {
-      RegExp regExp = path.toRegExp();
+      Route route = new Route(path);
+      RegExp regExp = route.toRegExp();
       views.put(regExp, view);
-      paths.put(regExp, path);
+      paths.put(regExp, route);
       install();
     }
   }
@@ -79,8 +80,9 @@ public class Router {
    * the view
    * @param route
    */
-  public void routeTo(RouteURL route) {
-    history.pushState(null, "", route.getPath());
+  public void routeTo(String route) {
+    RouteURL routeURL = new RouteURL(route);
+    history.pushState(null, "", routeURL.getPath());
     displayCurrentView();
   }
 
