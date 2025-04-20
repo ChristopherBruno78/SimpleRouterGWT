@@ -4,6 +4,7 @@ import static elemental2.dom.DomGlobal.window;
 
 import com.google.gwt.user.client.ui.Widget;
 import elemental2.dom.URL;
+import elemental2.dom.URLSearchParams;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,8 +41,20 @@ public class RouteURL {
     return normalize(url.pathname);
   }
 
+  public String getQuery() {
+    return url.search;
+  }
+
+  public String getPathAndQuery() {
+    String path = normalize(url.pathname);
+    if (url.search.isBlank()) {
+      return path;
+    }
+    return path.substring(0, path.length() - 1) + url.search;
+  }
+
   public RouteURL deriveRouteByAppendingPathComponent(String pathComponent) {
-    return new RouteURL(normalize(getPath() + pathComponent));
+    return new RouteURL(normalize(getPath() + pathComponent) + getQuery());
   }
 
   public String[] getPathComponents() {

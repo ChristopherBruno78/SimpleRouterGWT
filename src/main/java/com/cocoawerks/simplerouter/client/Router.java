@@ -82,7 +82,7 @@ public class Router {
    */
   public void routeTo(String route) {
     RouteURL routeURL = new RouteURL(route);
-    history.pushState(null, "", routeURL.getPath());
+    history.pushState(null, "", routeURL.getPathAndQuery());
     displayCurrentView();
   }
 
