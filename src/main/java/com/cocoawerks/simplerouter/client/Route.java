@@ -2,44 +2,70 @@ package com.cocoawerks.simplerouter.client;
 
 import static elemental2.dom.DomGlobal.window;
 
+import com.google.gwt.user.client.ui.Widget;
 import elemental2.dom.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+/**
+ * Route is a wrapper around URL with
+ * extra functionality
+ */
 public class Route {
   private final URL url;
 
-  static String normalizePath(String path) {
-    if (!path.startsWith("/")) {
-      path = "/" + path;
-    }
-    if (!path.endsWith("/")) {
-      path += "/";
-    }
-    return path;
-  }
-
-  public Route(String path) {
-    this.url = new URL(path, window.location.href);
+  public Route(String urlString) {
+    this.url = new URL(urlString, window.location.href);
   }
 
   public String getPath() {
-    return normalizePath(url.pathname);
+    return Path.normalize(url.pathname);
   }
 
   public Route deriveRouteByAppendingPathComponent(String pathComponent) {
-    return new Route(normalizePath(getPath() + pathComponent));
+    return new Route(Path.normalize(getPath() + pathComponent));
   }
 
-  public String getLastPathComponent() {
-    String[] parts = url.pathname.split("/");
-    if (parts.length > 1) {
-      return parts[parts.length - 1];
+  public String[] getPathComponents() {
+    List<String> pathComponents = new ArrayList<>();
+    String[] parts = getPath().split("/");
+    for (String part : parts) {
+      if (!part.isBlank()) {
+        pathComponents.add(part);
+      }
+    }
+    return pathComponents.toArray(new String[0]);
+  }
+
+  public String getPathComponent(Integer index) {
+    if (index > -1) {
+      String[] parts = getPathComponents();
+      if (index < parts.length) {
+        return parts[index];
+      }
     }
     return "";
   }
 
-  public String getParameter(String name) {
+  public String getPathParameter(String name) {
+    Path path = Router.get().getPath(this);
+    assert path != null : "Route is not registered with the Router";
+    Integer index = path.getParamIndex(name);
+    if (index > -1) {
+      return getPathComponent(index);
+    }
+    return "";
+  }
+
+  public String getQueryParameter(String name) {
     return url.searchParams.get(name);
+  }
+
+  public Widget getView() {
+    Widget view = Router.get().getView(this);
+    assert view != null : "Route is not registered with the Router";
+    return view;
   }
 
   @Override
@@ -51,11 +77,11 @@ public class Route {
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
     Route route = (Route) o;
-    return Objects.equals(getPath(), route.getPath());
+    return Objects.equals(url.href, route.url.href);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(getPath());
+    return Objects.hashCode(url.href);
   }
 }

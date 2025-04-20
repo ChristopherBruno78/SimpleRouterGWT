@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.RegEx;
 
 public class Router {
   private static final Router INSTANCE = new Router();
@@ -16,7 +17,8 @@ public class Router {
     return INSTANCE;
   }
 
-  private final Map<RegExp, Widget> views = new HashMap<>();
+  final Map<RegExp, Path> paths = new HashMap<>();
+  final Map<RegExp, Widget> views = new HashMap<>();
 
   private Widget currentView;
   private Widget notFoundView;
@@ -46,19 +48,11 @@ public class Router {
     }
   }
 
-  public void mapRoute(String pattern, Widget view) {
-    if (pattern != null) {
-      if (pattern.endsWith("**")) {
-        final String regExpPattern =
-          "^" + pattern.substring(0, pattern.length() - 2) + "\\S+$";
-        views.put(RegExp.compile(regExpPattern), view);
-      } else if (pattern.endsWith("*")) {
-        views.put(RegExp.compile(pattern), view);
-      } else {
-        final String normalizedPath = Route.normalizePath(pattern);
-        final String regExpPattern = "^" + normalizedPath + "$";
-        views.put(RegExp.compile(regExpPattern), view);
-      }
+  public void map(Path path, Widget view) {
+    if (path != null) {
+      RegExp regExp = path.toRegExp();
+      views.put(regExp, view);
+      paths.put(regExp, path);
     }
   }
 
@@ -66,7 +60,16 @@ public class Router {
     this.notFoundView = notFoundView;
   }
 
-  protected Widget getView(Route route) {
+  Path getPath(Route route) {
+    for (Map.Entry<RegExp, Path> entry : paths.entrySet()) {
+      if (entry.getKey().test(route.getPath())) {
+        return entry.getValue();
+      }
+    }
+    return null;
+  }
+
+  Widget getView(Route route) {
     for (Map.Entry<RegExp, Widget> entry : views.entrySet()) {
       if (entry.getKey().test(route.getPath())) {
         return entry.getValue();
