@@ -3,7 +3,6 @@ package com.cocoawerks.simplerouter.client;
 import static elemental2.dom.DomGlobal.window;
 
 import com.google.gwt.user.client.ui.Widget;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
