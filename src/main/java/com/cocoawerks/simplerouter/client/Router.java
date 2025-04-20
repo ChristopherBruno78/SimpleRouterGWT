@@ -25,10 +25,7 @@ public class Router implements HasRouteChangeHandlers {
   private final Map<RegExp, Widget> views = new HashMap<>();
 
   private Widget currentView;
-
-  public Route currentRoute() {
-    return new Route(window.location.pathname);
-  }
+  private Widget notFoundView;
 
   private Router() {}
 
@@ -49,6 +46,10 @@ public class Router implements HasRouteChangeHandlers {
     Scheduler.get().scheduleDeferred(this::displayCurrentView);
   }
 
+  public Route currentRoute() {
+    return new Route(window.location.pathname);
+  }
+
   private void displayCurrentView() {
     Route currentRoute = currentRoute();
     Widget nextView = getView(currentRoute);
@@ -67,18 +68,21 @@ public class Router implements HasRouteChangeHandlers {
   public void mapRoute(String pattern, Widget view) {
     if (pattern != null) {
       if (pattern.endsWith("**")) {
-        String regExpPattern =
+        final String regExpPattern =
           "^" + pattern.substring(0, pattern.length() - 2) + "\\S+$";
-        console.log(regExpPattern);
         views.put(RegExp.compile(regExpPattern), view);
       } else if (pattern.endsWith("*")) {
         views.put(RegExp.compile(pattern), view);
       } else {
-        String normalizedPath = Route.normalizePath(pattern);
-        String regExpPattern = "^" + normalizedPath + "$";
+        final String normalizedPath = Route.normalizePath(pattern);
+        final String regExpPattern = "^" + normalizedPath + "$";
         views.put(RegExp.compile(regExpPattern), view);
       }
     }
+  }
+
+  public void setNotFoundView(Widget notFoundView) {
+    this.notFoundView = notFoundView;
   }
 
   protected Widget getView(Route route) {
@@ -87,7 +91,7 @@ public class Router implements HasRouteChangeHandlers {
         return entry.getValue();
       }
     }
-    return null;
+    return notFoundView;
   }
 
   public void routeTo(Route route) {
