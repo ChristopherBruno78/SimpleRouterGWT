@@ -87,8 +87,11 @@ public class Router {
    * @param route
    */
   public void navigateTo(String route) {
-    URL URL = new URL(route);
-    history.pushState(null, "", URL.getPathAndQuery());
+    navigateTo(new URL(route));
+  }
+
+  public void navigateTo(URL url) {
+    history.pushState(null, "", url.getPathAndQuery());
     displayCurrentView();
   }
 
