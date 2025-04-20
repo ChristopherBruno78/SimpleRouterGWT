@@ -6,11 +6,10 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class Router  {
+public class Router {
   private static final Router INSTANCE = new Router();
 
   public static Router get() {
@@ -25,15 +24,11 @@ public class Router  {
   private Router() {}
 
   public void install() {
-    Scheduler
-      .get()
-      .scheduleDeferred(
-              this::displayCurrentView
-      );
+    Scheduler.get().scheduleDeferred(this::displayCurrentView);
   }
 
   public Route currentRoute() {
-    return new Route(window.location.pathname);
+    return new Route(window.location.toString());
   }
 
   private void displayCurrentView() {
@@ -79,6 +74,4 @@ public class Router  {
     }
     return notFoundView;
   }
-
-
 }
