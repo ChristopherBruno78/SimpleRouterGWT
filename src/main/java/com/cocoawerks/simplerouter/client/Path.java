@@ -1,10 +1,11 @@
 package com.cocoawerks.simplerouter.client;
 
-import static elemental2.dom.DomGlobal.console;
-
 import com.google.gwt.regexp.shared.RegExp;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import static elemental2.dom.DomGlobal.console;
 
 /**
  * Path is a relative path that ultimate the Router
