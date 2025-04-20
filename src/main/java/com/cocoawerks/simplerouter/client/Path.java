@@ -99,7 +99,6 @@ public class Path {
     }
     regexPattern.append("/");
     regexPattern.append("$");
-    console.log(regexPattern.toString());
     return RegExp.compile(regexPattern.toString());
   }
 }
