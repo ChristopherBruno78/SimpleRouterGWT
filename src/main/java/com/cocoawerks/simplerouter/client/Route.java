@@ -50,7 +50,7 @@ public class Route {
 
   public String getPathParameter(String name) {
     Path path = Router.get().getPath(this);
-    assert path != null : "Route is not registered with the Router";
+    assert path != null : "Route is not yet registered with the Router";
     Integer index = path.getParamIndex(name);
     if (index > -1) {
       return getPathComponent(index);
@@ -64,7 +64,7 @@ public class Route {
 
   public Widget getView() {
     Widget view = Router.get().getView(this);
-    assert view != null : "Route is not registered with the Router";
+    assert view != null : "Route is not yet registered with the Router";
     return view;
   }
 
