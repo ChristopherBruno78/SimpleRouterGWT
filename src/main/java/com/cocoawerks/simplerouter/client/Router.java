@@ -34,7 +34,6 @@ public class Router implements HasStateChangeHandlers {
     window.addEventListener(
       "popstate",
       event -> {
-        console.log("popstate");
         PopStateEvent popStateEvent = (PopStateEvent) event;
         handlerManager.fireEvent(new StateChangeEvent(popStateEvent.state));
       }
