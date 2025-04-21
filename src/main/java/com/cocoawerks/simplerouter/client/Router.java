@@ -54,9 +54,7 @@ public class Router {
           if (nextView == currentView) {
             return;
           }
-          if (currentView != null) {
-            RootPanel.get().remove(currentView);
-          }
+          RootPanel.get().clear();
           currentView = nextView;
           if (currentView != null) {
             RootPanel.get().add(currentView);
