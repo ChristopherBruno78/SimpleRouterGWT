@@ -2,7 +2,6 @@ package com.cocoawerks.simplerouter.client;
 
 import static elemental2.dom.DomGlobal.window;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ public class URL {
   final elemental2.dom.URL url;
 
   public URL(String urlString) {
-    this.url = new elemental2.dom.URL(urlString, GWT.getHostPageBaseURL());
+    this.url = new elemental2.dom.URL(urlString, getRoot());
   }
 
   /**
@@ -34,6 +33,10 @@ public class URL {
       path += "/";
     }
     return path;
+  }
+
+  public String getRoot() {
+     return window.location.protocol + "//" + window.location.hostname;
   }
 
   public String getHref() {
