@@ -1,5 +1,6 @@
 package com.cocoawerks.simplerouter.client;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class URL {
   final elemental2.dom.URL url;
 
   public URL(String urlString) {
-    this.url = new elemental2.dom.URL(urlString, getRoot());
+    this.url = new elemental2.dom.URL(urlString, GWT.getHostPageBaseURL());
   }
 
   /**
@@ -34,14 +35,6 @@ public class URL {
       path += "/";
     }
     return path;
-  }
-
-  /**
-   *
-   * @return The root url of the web application - protocol + hostname
-   */
-  public String getRoot() {
-     return window.location.protocol + "//" + window.location.hostname;
   }
 
   public String getHref() {
