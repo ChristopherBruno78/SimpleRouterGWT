@@ -36,6 +36,10 @@ public class URL {
     return path;
   }
 
+  /**
+   *
+   * @return The root url of the web application - protocol + hostname
+   */
   public String getRoot() {
      return window.location.protocol + "//" + window.location.hostname;
   }
