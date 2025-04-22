@@ -1,15 +1,16 @@
 package com.cocoawerks.simplerouter.client;
 
+import static com.cocoawerks.simplerouter.client.URL.normalize;
+import static elemental2.dom.DomGlobal.history;
+import static elemental2.dom.DomGlobal.window;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import static elemental2.dom.DomGlobal.history;
-import static elemental2.dom.DomGlobal.window;
 
 public class Router {
   private static final Router INSTANCE = new Router();
@@ -23,6 +24,8 @@ public class Router {
 
   private Widget currentView;
   private Widget notFoundView;
+
+  private URL baseUrl = new URL(GWT.getHostPageBaseURL());
 
   private Router() {}
 
@@ -72,7 +75,7 @@ public class Router {
    */
   public void route(String path, Widget view) {
     if (path != null) {
-      Route route = new Route(path);
+      Route route = new Route(baseUrl.getPath() + normalize(path));
       RegExp regExp = route.toRegExp();
       views.put(regExp, view);
       paths.put(regExp, route);
