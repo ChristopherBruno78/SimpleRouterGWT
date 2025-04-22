@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * RouteURL is a wrapper around native URL with
+ * URL is a wrapper around native URL with
  * extra functionality
  */
 public class URL {
   final elemental2.dom.URL url;
 
   public URL(String urlString) {
-    this.url = new elemental2.dom.URL(urlString, window.location.href);
+    final String rootUrl =
+            window.location.protocol + "//" + window.location.hostname;
+    this.url = new elemental2.dom.URL(urlString, rootUrl);
   }
 
   /**
