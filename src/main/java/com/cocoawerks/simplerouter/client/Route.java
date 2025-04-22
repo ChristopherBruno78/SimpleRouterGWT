@@ -1,10 +1,11 @@
 package com.cocoawerks.simplerouter.client;
 
-import static com.cocoawerks.simplerouter.client.URL.normalize;
-
 import com.google.gwt.regexp.shared.RegExp;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.cocoawerks.simplerouter.client.URL.normalize;
 
 /**
  * An internal class that tracks relative paths allowing the Router uses

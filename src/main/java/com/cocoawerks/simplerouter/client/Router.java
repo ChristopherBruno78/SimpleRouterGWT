@@ -1,14 +1,15 @@
 package com.cocoawerks.simplerouter.client;
 
-import static elemental2.dom.DomGlobal.history;
-import static elemental2.dom.DomGlobal.window;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import static elemental2.dom.DomGlobal.history;
+import static elemental2.dom.DomGlobal.window;
 
 public class Router {
   private static final Router INSTANCE = new Router();
