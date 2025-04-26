@@ -10,9 +10,11 @@
 
     <properties>
         <gwt.version>2.12.2</gwt.version>
+        <elemental2.version>1.2.1</elemental2.version>
         <maven.compiler.version>3.13.0</maven.compiler.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
+        <plugin.prettier.version>0.22</plugin.prettier.version>
         <plugin.prettier.goal>write</plugin.prettier.goal>
     </properties>
 
@@ -38,7 +40,7 @@
         <dependency>
             <groupId>com.google.elemental2</groupId>
             <artifactId>elemental2-dom</artifactId>
-            <version>1.2.1</version>
+            <version>${elemental2.version}</version>
         </dependency>
 
     </dependencies>
@@ -70,7 +72,7 @@
             <plugin>
                 <groupId>com.hubspot.maven.plugins</groupId>
                 <artifactId>prettier-maven-plugin</artifactId>
-                <version>0.22</version>
+                <version>${plugin.prettier.version}</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
