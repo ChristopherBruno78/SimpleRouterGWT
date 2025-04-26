@@ -1,6 +1,6 @@
 package com.cocoawerks.simplerouter.client;
 
-import static com.cocoawerks.simplerouter.client.URL.normalize;
+import static elemental2.dom.DomGlobal.console;
 
 import com.google.gwt.regexp.shared.RegExp;
 import java.util.HashMap;
@@ -19,8 +19,8 @@ class Route {
 
   private final Map<String, Integer> pathParams = new HashMap<>();
 
-  public Route(String path) {
-    this.path = normalize(path);
+  public Route(URL url) {
+    this.path = url.getPath();
     parse();
   }
 
@@ -66,13 +66,15 @@ class Route {
    */
   RegExp toRegExp() {
     StringBuilder regexPattern = new StringBuilder();
+    console.log("path = " + path);
     String[] parts = path.split("/");
+    console.log(parts);
     regexPattern.append("^");
     for (String part : parts) {
       if (!part.isBlank()) {
         regexPattern.append("/");
         if (part.equals("*")) {
-          regexPattern.append("\\S+");
+          regexPattern.append(".*");
         } else if (part.startsWith(":")) {
           regexPattern.append("[^/]+");
         } else {
@@ -80,8 +82,12 @@ class Route {
         }
       }
     }
-    regexPattern.append("/");
+    if (regexPattern.charAt(regexPattern.length() - 1) != '*') {
+      regexPattern.append("/");
+    }
+
     regexPattern.append("$");
+    console.log(regexPattern.toString());
     return RegExp.compile(regexPattern.toString());
   }
 }

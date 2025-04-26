@@ -2,11 +2,9 @@ package com.cocoawerks.simplerouter.client;
 
 import static elemental2.dom.DomGlobal.window;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import elemental2.dom.URLSearchParams;
+import java.util.*;
 
 /**
  * URL is a wrapper around native URL with
@@ -15,8 +13,16 @@ import java.util.Objects;
 public class URL {
   final elemental2.dom.URL url;
 
-  public URL(String urlString) {
-    this.url = new elemental2.dom.URL(urlString, GWT.getHostPageBaseURL());
+  public URL(String relativePath, String basePath) {
+    this.url =
+      new elemental2.dom.URL(
+        relativePath,
+        getHostUrl() + stripRelativePath(basePath)
+      );
+  }
+
+  public URL(String relativePath) {
+    this(relativePath, "");
   }
 
   /**
@@ -26,7 +32,7 @@ public class URL {
    * @param path
    * @return normalized path
    */
-  static String normalize(String path) {
+  static String normalizeRelativePath(String path) {
     if (!path.startsWith("/")) {
       path = "/" + path;
     }
@@ -34,6 +40,20 @@ public class URL {
       path += "/";
     }
     return path;
+  }
+
+  static String stripRelativePath(String path) {
+    if (path.startsWith("/")) {
+      path = path.substring(1);
+    }
+    if (path.endsWith("/")) {
+      path = path.substring(0, path.length() - 1);
+    }
+    return path;
+  }
+
+  public String getHostUrl() {
+    return window.location.protocol + "//" + window.location.host;
   }
 
   public String getHref() {
@@ -61,7 +81,7 @@ public class URL {
   }
 
   public String getPath() {
-    return normalize(url.pathname);
+    return normalizeRelativePath(url.pathname);
   }
 
   public String getQuery() {
@@ -69,7 +89,7 @@ public class URL {
   }
 
   public String getPathAndQuery() {
-    String path = normalize(url.pathname);
+    String path = normalizeRelativePath(url.pathname);
     if (url.search.isBlank()) {
       return path;
     }
@@ -82,12 +102,23 @@ public class URL {
    * @return URL with appended path component
    */
   public URL deriveURLByAppendingPathComponent(String pathComponent) {
-    return new URL(normalize(getPath() + pathComponent) + getQuery());
+    return new URL(
+      normalizeRelativePath(getPath() + stripRelativePath(pathComponent)) +
+      getQuery()
+    );
   }
 
   public URL deriveURLByAppendingQuery(String key, String value) {
-    URL derivedURL = new URL(normalize(getPath()) + getQuery());
+    URL derivedURL = new URL(getHref());
     derivedURL.url.searchParams.append(key, value);
+    return derivedURL;
+  }
+
+  public URL deriveURLByAppendingQueries(Map<String, String> query) {
+    URL derivedURL = new URL(getHref());
+    for (Map.Entry<String, String> entry : query.entrySet()) {
+      derivedURL.url.searchParams.append(entry.getKey(), entry.getValue());
+    }
     return derivedURL;
   }
 
@@ -117,9 +148,12 @@ public class URL {
     return "";
   }
 
+  private static final String ROUTE_NOT_REGISTERED_ERROR_MSG =
+    "Route is not yet registered with the Router.";
+
   public String getPathParameter(String name) {
     Route route = Router.get().getRoute(this);
-    assert route != null : "Route is not yet registered with the Router";
+    assert route != null : ROUTE_NOT_REGISTERED_ERROR_MSG;
     Integer index = route.getParamIndex(name);
     if (index > -1) {
       return getPathComponent(index);
@@ -131,9 +165,16 @@ public class URL {
     return url.searchParams.get(name);
   }
 
+  public Map<String, String> getQueryParameters() {
+    URLSearchParams params = url.searchParams;
+    Map<String, String> paramsMap = new HashMap<>();
+    params.forEach((v, k) -> paramsMap.put(k, v));
+    return paramsMap;
+  }
+
   public Widget getView() {
     Widget view = Router.get().getView(this);
-    assert view != null : "Route is not yet registered with the Router";
+    assert view != null : ROUTE_NOT_REGISTERED_ERROR_MSG;
     return view;
   }
 

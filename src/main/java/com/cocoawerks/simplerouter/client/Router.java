@@ -1,10 +1,8 @@
 package com.cocoawerks.simplerouter.client;
 
-import static com.cocoawerks.simplerouter.client.URL.normalize;
 import static elemental2.dom.DomGlobal.history;
 import static elemental2.dom.DomGlobal.window;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -13,11 +11,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Router {
-  private static final Router INSTANCE = new Router();
+  private static Router INSTANCE;
 
-  public static Router get() {
+  private static final String SINGLE_ROUTER_ERROR_MSG =
+    "Router already created: only one Router instance is allowed.";
+
+  public static Router create(String basePath) {
+    assert INSTANCE == null : SINGLE_ROUTER_ERROR_MSG;
+    INSTANCE = new Router(basePath);
     return INSTANCE;
   }
+
+  public static Router create() {
+    return create("/");
+  }
+
+  public static Router get() {
+    if (INSTANCE != null) {
+      return INSTANCE;
+    }
+    return create();
+  }
+
+  private final URL baseUrl;
 
   final Map<RegExp, Route> paths = new HashMap<>();
   final Map<RegExp, Widget> views = new HashMap<>();
@@ -25,9 +41,9 @@ public class Router {
   private Widget currentView;
   private Widget notFoundView;
 
-  private URL baseUrl = new URL(GWT.getHostPageBaseURL());
-
-  private Router() {}
+  private Router(String basePath) {
+    this.baseUrl = new URL(basePath);
+  }
 
   private boolean installed = false;
 
@@ -75,7 +91,7 @@ public class Router {
    */
   public void route(String path, Widget view) {
     if (path != null) {
-      Route route = new Route(baseUrl.getPath() + normalize(path));
+      Route route = new Route(baseUrl.deriveURLByAppendingPathComponent(path));
       RegExp regExp = route.toRegExp();
       views.put(regExp, view);
       paths.put(regExp, route);
@@ -92,8 +108,11 @@ public class Router {
     navigateTo(new URL(route));
   }
 
-  public void navigateTo(URL url) {
-    history.pushState(null, "", url.getPathAndQuery());
+  public void navigateTo(URL route) {
+    URL newUrl = baseUrl
+      .deriveURLByAppendingPathComponent(route.getPath())
+      .deriveURLByAppendingQueries(route.getQueryParameters());
+    history.pushState(null, "", newUrl.getPathAndQuery());
     displayCurrentView();
   }
 
