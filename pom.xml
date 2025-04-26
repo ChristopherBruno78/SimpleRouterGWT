@@ -11,7 +11,7 @@
     <properties>
         <gwt.version>2.12.2</gwt.version>
         <elemental2.version>1.2.1</elemental2.version>
-        <maven.compiler.version>3.13.0</maven.compiler.version>
+        <plugin.maven.compiler.version>3.13.0</plugin.maven.compiler.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <plugin.prettier.version>0.22</plugin.prettier.version>
@@ -85,7 +85,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.version}</version>
+                <version>${plugin.maven.compiler.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
