@@ -1,10 +1,11 @@
 package com.cocoawerks.simplerouter.client;
 
-import static elemental2.dom.DomGlobal.window;
-
 import com.google.gwt.user.client.ui.Widget;
 import elemental2.dom.URLSearchParams;
+
 import java.util.*;
+
+import static elemental2.dom.DomGlobal.window;
 
 /**
  * URL is a wrapper around native URL with

@@ -1,8 +1,7 @@
 package com.cocoawerks.simplerouter.client;
 
-import static elemental2.dom.DomGlobal.console;
-
 import com.google.gwt.regexp.shared.RegExp;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,9 +65,7 @@ class Route {
    */
   RegExp toRegExp() {
     StringBuilder regexPattern = new StringBuilder();
-    console.log("path = " + path);
     String[] parts = path.split("/");
-    console.log(parts);
     regexPattern.append("^");
     for (String part : parts) {
       if (!part.isBlank()) {
@@ -87,7 +84,6 @@ class Route {
     }
 
     regexPattern.append("$");
-    console.log(regexPattern.toString());
     return RegExp.compile(regexPattern.toString());
   }
 }
