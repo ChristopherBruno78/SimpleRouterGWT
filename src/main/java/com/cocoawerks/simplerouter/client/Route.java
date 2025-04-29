@@ -1,7 +1,6 @@
 package com.cocoawerks.simplerouter.client;
 
 import com.google.gwt.regexp.shared.RegExp;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,8 +17,8 @@ class Route {
 
   private final Map<String, Integer> pathParams = new HashMap<>();
 
-  public Route(URL url) {
-    this.path = url.getPath();
+  public Route(URLToken urlToken) {
+    this.path = urlToken.getPath();
     parse();
   }
 

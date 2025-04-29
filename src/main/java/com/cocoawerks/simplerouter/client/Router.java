@@ -1,15 +1,14 @@
 package com.cocoawerks.simplerouter.client;
 
+import static elemental2.dom.DomGlobal.history;
+import static elemental2.dom.DomGlobal.window;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import static elemental2.dom.DomGlobal.history;
-import static elemental2.dom.DomGlobal.window;
 
 public class Router {
   private static Router INSTANCE;
@@ -34,7 +33,7 @@ public class Router {
     return create();
   }
 
-  private final URL baseUrl;
+  private final URLToken baseUrl;
 
   final Map<RegExp, Route> paths = new HashMap<>();
   final Map<RegExp, Widget> views = new HashMap<>();
@@ -43,7 +42,7 @@ public class Router {
   private Widget notFoundView;
 
   private Router(String basePath) {
-    this.baseUrl = new URL(basePath);
+    this.baseUrl = new URLToken(basePath);
   }
 
   private boolean installed = false;
@@ -61,8 +60,8 @@ public class Router {
     }
   }
 
-  public URL currentURL() {
-    return new URL(window.location.toString());
+  public URLToken currentURLToken() {
+    return new URLToken(window.location.toString());
   }
 
   private void displayCurrentView() {
@@ -70,8 +69,8 @@ public class Router {
       .get()
       .scheduleDeferred(
         () -> {
-          URL currentURL = currentURL();
-          Widget nextView = getView(currentURL);
+          URLToken token = currentURLToken();
+          Widget nextView = getView(token);
           if (nextView == currentView) {
             return;
           }
@@ -106,11 +105,11 @@ public class Router {
    * @param route
    */
   public void navigateTo(String route) {
-    navigateTo(new URL(route));
+    navigateTo(new URLToken(route));
   }
 
-  public void navigateTo(URL route) {
-    URL newUrl = baseUrl
+  public void navigateTo(URLToken route) {
+    URLToken newUrl = baseUrl
       .deriveURLByAppendingPathComponent(route.getPath())
       .deriveURLByAppendingQueries(route.getQueryParameters());
     history.pushState(null, "", newUrl.getPathAndQuery());
@@ -125,7 +124,7 @@ public class Router {
     this.notFoundView = notFoundView;
   }
 
-  Route getRoute(URL route) {
+  Route getRoute(URLToken route) {
     for (Map.Entry<RegExp, Route> entry : paths.entrySet()) {
       if (entry.getKey().test(route.getPath())) {
         return entry.getValue();
@@ -134,7 +133,7 @@ public class Router {
     return null;
   }
 
-  Widget getView(URL route) {
+  Widget getView(URLToken route) {
     for (Map.Entry<RegExp, Widget> entry : views.entrySet()) {
       if (entry.getKey().test(route.getPath())) {
         return entry.getValue();

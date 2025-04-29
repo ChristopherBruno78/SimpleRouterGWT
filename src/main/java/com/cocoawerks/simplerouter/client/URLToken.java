@@ -1,28 +1,25 @@
 package com.cocoawerks.simplerouter.client;
 
-import com.google.gwt.user.client.ui.Widget;
-import elemental2.dom.URLSearchParams;
-
-import java.util.*;
-
 import static elemental2.dom.DomGlobal.window;
 
-/**
- * URL is a wrapper around native URL with
- * extra functionality
- */
-public class URL {
-  final elemental2.dom.URL url;
+import com.google.gwt.user.client.ui.Widget;
+import elemental2.dom.URL;
+import elemental2.dom.URLSearchParams;
+import java.util.*;
 
-  public URL(String relativePath, String basePath) {
+/**
+ * URLToken is a wrapper around native URL exposing the
+ * path, path parameters, query parameters and hash
+ */
+public class URLToken {
+  final URL url;
+
+  URLToken(String relativePath, String basePath) {
     this.url =
-      new elemental2.dom.URL(
-        relativePath,
-        getHostUrl() + stripRelativePath(basePath)
-      );
+      new URL(relativePath, getHostUrl() + stripRelativePath(basePath));
   }
 
-  public URL(String relativePath) {
+  URLToken(String relativePath) {
     this(relativePath, "");
   }
 
@@ -53,32 +50,12 @@ public class URL {
     return path;
   }
 
-  public String getHostUrl() {
+  private String getHostUrl() {
     return window.location.protocol + "//" + window.location.host;
   }
 
-  public String getHref() {
-    return url.href;
-  }
-
-  public String getOrigin() {
-    return url.origin;
-  }
-
-  public String getProtocol() {
-    return url.protocol;
-  }
-
-  public String getHost() {
-    return url.host;
-  }
-
-  public String getHostname() {
-    return url.hostname;
-  }
-
-  public String getPort() {
-    return url.port;
+  public String getHash() {
+    return url.hash;
   }
 
   public String getPath() {
@@ -102,21 +79,21 @@ public class URL {
    * @param pathComponent
    * @return URL with appended path component
    */
-  public URL deriveURLByAppendingPathComponent(String pathComponent) {
-    return new URL(
+  public URLToken deriveURLByAppendingPathComponent(String pathComponent) {
+    return new URLToken(
       normalizeRelativePath(getPath() + stripRelativePath(pathComponent)) +
       getQuery()
     );
   }
 
-  public URL deriveURLByAppendingQuery(String key, String value) {
-    URL derivedURL = new URL(getHref());
+  public URLToken deriveURLByAppendingQuery(String key, String value) {
+    URLToken derivedURL = new URLToken(url.href);
     derivedURL.url.searchParams.append(key, value);
     return derivedURL;
   }
 
-  public URL deriveURLByAppendingQueries(Map<String, String> query) {
-    URL derivedURL = new URL(getHref());
+  public URLToken deriveURLByAppendingQueries(Map<String, String> query) {
+    URLToken derivedURL = new URLToken(url.href);
     for (Map.Entry<String, String> entry : query.entrySet()) {
       derivedURL.url.searchParams.append(entry.getKey(), entry.getValue());
     }
@@ -187,7 +164,7 @@ public class URL {
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    URL route = (URL) o;
+    URLToken route = (URLToken) o;
     return Objects.equals(url.href, route.url.href);
   }
 
